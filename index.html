@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meme Name Quest</title>
+  <style>
+    :root {
+      --ink: #322b24;
+      --purple: #4d607e;
+      --pink: #d95d43;
+      --yellow: #f0b736;
+      --mint: #79aa91;
+      --paper: #fffaf0;
+      --line: #c8d4e3;
+      --shadow: 7px 8px 0 rgba(66, 53, 37, .22);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Comic Sans MS", "Segoe Print", "Noto Sans Thai", system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse at 7% 13%, #f5cb58 0 4%, transparent 4.2%),
+        radial-gradient(ellipse at 93% 12%, #eb8e71 0 3%, transparent 3.2%),
+        repeating-linear-gradient(0deg, transparent 0 26px, rgba(65,91,125,.12) 27px 28px),
+        #b6d0b8;
+      padding: 28px 18px 44px;
+    }
+
+    .app { width: min(960px, 100%); margin: 0 auto; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-family: "Segoe Print", "Comic Sans MS", "Noto Sans Thai", cursive; font-weight: 900; letter-spacing: -.9px; font-size: clamp(1.15rem, 3vw, 1.55rem); }
+    .logo-mark { width: 43px; height: 43px; display: grid; place-items: center; background: #f9e7a1; color: var(--ink); border: 2px solid var(--ink); border-radius: 49% 43% 52% 41%; transform: rotate(-9deg); box-shadow: 3px 4px 0 var(--ink); }
+    .top-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+    .score-pill { background: #fffdf6; border: 2px solid var(--ink); border-radius: 7px 13px 8px 12px; padding: 9px 15px; box-shadow: 3px 4px 0 var(--ink); font-weight: 900; white-space: nowrap; transform: rotate(1.5deg); }
+    .sound-toggle { padding: 9px 12px; border: 2px solid var(--ink); border-radius: 13px 7px 11px 8px; color: var(--ink); background: #f7d875; box-shadow: 3px 3px 0 var(--ink); font-weight: 900; cursor: pointer; white-space: nowrap; transform: rotate(-1deg); }
+    .sound-toggle:hover { transform: rotate(-1deg) translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
+    .sound-toggle.off { background: #e8e2d8; color: #625c7f; }
+
+    .game-card { overflow: hidden; background: var(--paper); border: 2px solid var(--ink); border-radius: 10px 18px 9px 14px; box-shadow: var(--shadow); }
+    .hero { position: relative; overflow: hidden; padding: 29px 32px 25px; color: var(--ink); background: repeating-linear-gradient(0deg, #fffaf0 0 27px, #d8e4f0 28px 29px); border-bottom: 2px solid var(--ink); }
+    .hero::before { content: "✦  ✎  ☁"; position: absolute; right: 30px; top: 23px; color: #d95d43; font-size: 1.8rem; letter-spacing: 6px; transform: rotate(7deg); }
+    .hero::after { content: ""; position: absolute; left: 19px; top: 0; width: 2px; height: 100%; background: #eb9e9d; }
+    .eyebrow { position: relative; z-index: 1; display: inline-block; padding: 5px 11px; background: #e97859; color: #fffdf8; border: 2px solid var(--ink); border-radius: 6px 11px 8px 5px; font-size: .73rem; font-weight: 900; letter-spacing: .6px; transform: rotate(-1.2deg); }
+    h1 { position: relative; z-index: 1; margin: 12px 0 4px; font-family: "Segoe Print", "Comic Sans MS", "Noto Sans Thai", cursive; font-size: clamp(1.55rem, 5vw, 2.45rem); line-height: 1.05; letter-spacing: -.9px; }
+    .hero p { position: relative; z-index: 1; max-width: 600px; margin: 0; color: #5f5549; font-size: .96rem; font-weight: 700; }
+
+    .progress-wrap { padding: 20px 28px 0; }
+    .progress-label { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 8px; font-size: .85rem; font-weight: 900; }
+    .progress-track { overflow: hidden; height: 13px; background: #e4e0d5; border: 2px solid var(--ink); border-radius: 5px 9px 6px 8px; }
+    .progress-fill { height: 100%; width: 10%; background: repeating-linear-gradient(135deg, #719e87 0 9px, #8dbca1 9px 17px); border-radius: inherit; transition: width .35s ease; }
+
+    .question-area { display: grid; grid-template-columns: 340px 1fr; gap: 30px; align-items: center; padding: 26px 28px 30px; }
+    .visual-card { position: relative; isolation: isolate; min-height: 280px; display: grid; place-items: center; overflow: hidden; border: 9px solid #fffef8; outline: 2px solid var(--ink); border-radius: 4px 19px 7px 16px; background: var(--visual-bg, #ffe0a6); box-shadow: 5px 6px 0 rgba(50,43,36,.25); transform: rotate(-1.2deg); }
+    .visual-card::before, .visual-card::after { position: absolute; z-index: -1; content: ""; border: 3px solid rgba(29,27,53,.55); border-radius: 50%; }
+    .visual-card::before { width: 235px; height: 235px; background: rgba(255,255,255,.38); }
+    .visual-card::after { width: 310px; height: 80px; bottom: -42px; background: rgba(29,27,53,.12); }
+    .sticker { position: absolute; top: 13px; left: 13px; padding: 5px 8px; background: #f6df7d; border: 2px solid var(--ink); border-radius: 3px 9px 4px 7px; font-weight: 900; font-size: .68rem; transform: rotate(-5deg); }
+    .art { display: flex; align-items: flex-end; justify-content: center; min-height: 180px; font-size: clamp(4.6rem, 12vw, 7.1rem); line-height: .78; filter: drop-shadow(5px 6px 0 rgba(50,43,36,.3)); transform: rotate(var(--tilt, 0deg)); }
+    .art span { margin-left: -.25em; }
+    .caption { position: absolute; bottom: 13px; right: 13px; padding: 5px 8px; color: var(--ink); background: #fffef8; border: 2px solid var(--ink); border-radius: 6px 3px 8px 4px; font-weight: 900; font-size: .7rem; transform: rotate(3deg); }
+
+    .prompt-number { margin: 0; color: #bd533b; font-size: .76rem; font-weight: 900; letter-spacing: .8px; }
+    h2 { margin: 7px 0 18px; font-family: "Segoe Print", "Comic Sans MS", "Noto Sans Thai", cursive; font-size: clamp(1.25rem, 3vw, 1.7rem); line-height: 1.18; }
+    .blank { display: block; margin-bottom: 20px; padding: 13px 15px; border: 2px dashed #55708c; border-radius: 5px 12px 7px 10px; color: var(--ink); background: #f0f5f6; font-family: "Courier New", monospace; font-size: clamp(1rem, 2.6vw, 1.26rem); font-weight: 900; letter-spacing: 1.4px; word-break: break-word; }
+    .clues { display: grid; gap: 8px; margin-bottom: 20px; padding: 13px 15px; border: 2px dashed #55708c; border-radius: 5px 12px 7px 10px; background: #f0f5f6; }
+    .clue { display: flex; gap: 8px; align-items: flex-start; font-size: .94rem; font-weight: 700; line-height: 1.32; }
+    .clue::before { content: "✦"; color: var(--pink); font-weight: 900; }
+    .answers { display: grid; gap: 10px; }
+    button { font: inherit; }
+    .answer { display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px 12px; border: 2px solid var(--ink); border-radius: 6px 12px 7px 10px; color: var(--ink); background: #fffef9; text-align: left; font-weight: 800; cursor: pointer; box-shadow: 2px 3px 0 rgba(50,43,36,.25); transition: transform .12s ease, background .12s ease; }
+    .answer:nth-child(2) { border-radius: 11px 5px 12px 7px; }
+    .answer:nth-child(3) { border-radius: 7px 12px 5px 11px; }
+    .answer:nth-child(4) { border-radius: 12px 7px 10px 5px; }
+    .answer:hover:not(:disabled) { background: #fff0b9; transform: translateX(4px) rotate(-.35deg); }
+    .answer:disabled { cursor: default; }
+    .letter { flex: 0 0 27px; height: 27px; display: grid; place-items: center; border-radius: 48% 55% 45% 52%; color: #fffdf8; background: #55708c; font-size: .78rem; transform: rotate(-4deg); }
+    .answer.correct { color: #073d30; background: #a7f4d8; border-color: #073d30; }
+    .answer.correct .letter { background: #087154; }
+    .answer.wrong { color: #7e1642; background: #ffd1e5; border-color: #7e1642; }
+    .answer.wrong .letter { background: #cf3773; }
+    .feedback { min-height: 29px; margin: 14px 0 0; font-weight: 900; }
+    .next-row { display: flex; justify-content: flex-end; margin-top: 10px; }
+    .next { display: none; padding: 10px 16px; border: 2px solid var(--ink); border-radius: 7px 13px 8px 10px; color: var(--ink); background: #f0b736; box-shadow: 3px 3px 0 var(--ink); font-weight: 900; cursor: pointer; }
+    .next:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+    .next.show { display: block; }
+
+    .result { display: none; padding: 34px 28px; text-align: center; }
+    .result.show { display: block; }
+    .result .big-emoji { font-size: 5.2rem; line-height: 1; }
+    .result h2 { margin: 9px 0; font-size: 2rem; }
+    .result p { margin: 0 auto 19px; max-width: 520px; font-size: 1.05rem; }
+    .restart { padding: 12px 19px; border: 2px solid var(--ink); border-radius: 7px 12px 8px 13px; color: var(--ink); background: var(--yellow); box-shadow: 4px 4px 0 var(--ink); font-weight: 900; cursor: pointer; }
+
+    @media (max-width: 720px) {
+      body { padding: 16px 12px 30px; }
+      .hero, .progress-wrap { padding-left: 18px; padding-right: 18px; }
+      .question-area { grid-template-columns: 1fr; gap: 21px; padding: 22px 18px 25px; }
+      .visual-card { min-height: 215px; }
+      .art { min-height: 136px; }
+      .topbar { align-items: flex-start; }
+      .top-actions { gap: 7px; flex-direction: column; align-items: flex-end; }
+      .score-pill, .sound-toggle { padding: 7px 10px; font-size: .82rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="logo"><span class="logo-mark">✦</span><span>English Game Corner</span></div>
+      <div class="top-actions">
+        <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true">🔊 เสียง: เปิด</button>
+        <div class="score-pill">⭐ <span id="score">0</span> / <span id="total">20</span></div>
+      </div>
+    </header>
+
+    <section class="game-card">
+      <div class="hero">
+        <span class="eyebrow" id="setBadge">ชุดที่ 1 · GUESS THE WORD</span>
+        <h1 id="heroTitle">อ่านคำใบ้ แล้วทายคำให้ถูก!</h1>
+        <p id="heroText">เริ่มจากคำศัพท์สนุก ๆ ก่อนเข้าสู่ด่าน Meme Name Quest</p>
+      </div>
+
+      <div id="quiz">
+        <div class="progress-wrap">
+          <div class="progress-label"><span id="counter">ข้อ 1 จาก 10</span><span>เติมให้ถูกนะ 👀</span></div>
+          <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+        </div>
+        <div class="question-area">
+          <div class="visual-card" id="visual">
+            <span class="sticker">MEME SPOTTED</span>
+            <div class="art" id="art"></div>
+            <span class="caption">WHO IS THIS?</span>
+          </div>
+          <div>
+            <p class="prompt-number" id="number">QUESTION 01</p>
+            <h2 id="question">ชื่อมีมนี้เรียกว่าอะไร?</h2>
+            <div class="blank" id="blank"></div>
+            <div class="clues" id="clues"></div>
+            <div class="answers" id="answers"></div>
+            <p class="feedback" id="feedback" aria-live="polite"></p>
+            <div class="next-row"><button class="next" id="next">ข้อต่อไป →</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result" id="result">
+        <div class="big-emoji" id="resultEmoji">🏆</div>
+        <h2 id="resultTitle">สุดยอด!</h2>
+        <p id="resultText"></p>
+        <button class="restart" id="restart">เล่นอีกครั้ง ↻</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const wordQuestions = [
+      { art: '🪑', bg: '#ffd96a', tilt: '-4deg', question: 'What am I?', clues: ['I have four legs.', 'I cannot walk.', 'You can sit on me.', 'I am usually found in a classroom.'], answer: 'Chair', choices: ['Table', 'Chair', 'Desk', 'Door'], tip: 'ถูกต้อง! It is a chair. 🪑' },
+      { art: '☂️', bg: '#99dcff', tilt: '5deg', question: 'What am I?', clues: ['I am not a hat.', 'I open when the sky starts crying.', 'I help you stay dry.', 'You usually carry me in your hand.'], answer: 'Umbrella', choices: ['Umbrella', 'Jacket', 'Backpack', 'Towel'], tip: 'ถูกต้อง! An umbrella keeps you dry. ☂️' },
+      { art: '🕶️', bg: '#ffb6c3', tilt: '-4deg', question: 'What am I?', clues: ['I have no eyes.', 'But I can help protect your eyes.', 'I am useful on a sunny day.', 'Some people wear me to look cool. 😎'], answer: 'Sunglasses', choices: ['Helmet', 'Sunglasses', 'Headphones', 'Gloves'], tip: 'ใช่เลย! Sunglasses 😎' },
+      { art: '📱', bg: '#c5b4ff', tilt: '3deg', question: 'What am I?', clues: ['I am smaller than a computer.', 'I can connect you to the internet.', 'You probably touch me many times a day. 😂', 'I can take photos too.'], answer: 'Smartphone', choices: ['Television', 'Smartphone', 'Calculator', 'Camera'], tip: 'ถูกต้อง! It is a smartphone. 📱' },
+      { art: '🐙', bg: '#ff9ecf', tilt: '-4deg', question: 'What am I?', clues: ['I live in the ocean.', 'I have eight arms.', 'I have no bones.', 'I can squeeze into surprisingly small spaces.'], answer: 'Octopus', choices: ['Jellyfish', 'Octopus', 'Dolphin', 'Shark'], tip: 'แปดแขนเลย — Octopus! 🐙' },
+      { art: '🧊', bg: '#a9e9f6', tilt: '4deg', question: 'What am I?', clues: ['I am cold.', 'I am hard, but I can disappear.', 'I become water when I get too warm.', 'You can find me in your freezer.'], answer: 'Ice', choices: ['Snow', 'Ice', 'Sugar', 'Glass'], tip: 'ถูกต้อง! Ice melts into water. 🧊' },
+      { art: '🦉', bg: '#c8eca8', tilt: '-4deg', question: 'What am I?', clues: ['I am a bird.', 'I can see very well at night.', 'I am awake when many people are sleeping.', 'In stories, people often think I am wise.'], answer: 'Owl', choices: ['Eagle', 'Owl', 'Parrot', 'Penguin'], tip: 'ถูกต้อง! A wise owl. 🦉' },
+      { art: '⏰', bg: '#ffe35f', tilt: '5deg', question: 'What am I?', clues: ['I don’t have a mouth, but I can wake you up.', 'I don’t have legs, but I never stop moving.', 'You look at me when you are late. 😭'], answer: 'Clock', choices: ['Clock', 'Mirror', 'Calendar', 'Television'], tip: 'Time is up — it is a clock! ⏰' },
+      { art: '🧠', bg: '#f7a3d2', tilt: '-3deg', question: 'What am I?', clues: ['You cannot see me.', 'You use me to think and remember things.', 'You need me when solving difficult problems.', 'Unlike a phone, I don’t need charging. 😂'], answer: 'Brain', choices: ['Brain', 'Heart', 'Muscle', 'Memory card'], tip: 'ใช่แล้ว! Your brain is working hard. 🧠' },
+      { art: '💬', bg: '#ffc490', tilt: '4deg', question: 'What am I? 🔥 FINAL BOSS', clues: ['I have no legs, but I can travel around the world.', 'I can carry information from one person to another.', 'I can be sent instantly.', 'You probably use me every day.'], answer: 'Message', choices: ['Message', 'Suitcase', 'Bicycle', 'Passport'], tip: 'FINAL BOSS ผ่านแล้ว! A message can travel instantly. 💬' }
+    ].map((question) => ({ ...question, set: 1 }));
+
+    const memeQuestions = [
+      { art: '🪵<span>⏰</span>', bg: '#ffd96a', tilt: '-5deg', blank: 'TUNG TUNG TUNG  S _ _ _ R', answer: 'Sahur', choices: ['Sugar', 'Sahur', 'School', 'Summer'], tip: 'ถูกต้อง! Tung Tung Tung Sahur 🔔' },
+      { art: '🦈<span>👟</span>', bg: '#99dcff', tilt: '5deg', blank: 'TRALALERO  T R _ L _ L _', answer: 'Tralala', choices: ['Tralala', 'Train', 'Trouble', 'Tropical'], tip: 'เยี่ยม! ว่ายน้ำพร้อมรองเท้าเลย 🦈' },
+      { art: '✈️<span>🐊</span>', bg: '#ffb6c3', tilt: '-4deg', blank: 'BOMBARDIRO  C R O C O D _ L O', answer: 'Crocodilo', choices: ['Crocodile', 'Crocodilo', 'Chocolate', 'Computer'], tip: 'ใช่แล้ว! จระเข้บินได้ ✈️' },
+      { art: '💃<span>☕</span>', bg: '#ffc490', tilt: '4deg', blank: 'BALLERINA  C A P P U C C _ N A', answer: 'Cappuccina', choices: ['Cappuccino', 'Cappuccina', 'Captain', 'Camera'], tip: 'ถูกต้อง! นักบัลเลต์สายกาแฟ ☕' },
+      { art: '🐘<span>🌵</span>', bg: '#c8eca8', tilt: '-4deg', blank: 'LIRILI  L A R _ L A', answer: 'Larila', choices: ['Larila', 'Lollipop', 'Laptop', 'Lemon'], tip: 'เติม Larila ได้พอดี! 🌵' },
+      { art: '🦵<span>🦈</span>', bg: '#c5b4ff', tilt: '3deg', blank: 'BRR BRR  P A T A P _ M', answer: 'Patapim', choices: ['Patapim', 'Penguin', 'Potato', 'Party'], tip: 'BRR BRR Patapim! ถูกต้อง!' },
+      { art: '🐒<span>🍌</span>', bg: '#ffe35f', tilt: '-3deg', blank: 'CHIMPANZINI  B A N A N _ N I', answer: 'Bananini', choices: ['Bananini', 'Banana', 'Ballerina', 'Bambini'], tip: 'กล้วยต้อง Bananini 🍌' },
+      { art: '🐸<span>🚀</span>', bg: '#9be7b1', tilt: '5deg', blank: 'BONECA  A M B A L _ B U', answer: 'Ambalabu', choices: ['Ambulance', 'Ambalabu', 'Amazing', 'Animal'], tip: 'ถูกแล้ว! Boneca Ambalabu 🚀' },
+      { art: '🧊<span>🐫</span>', bg: '#9de0ee', tilt: '-5deg', blank: 'FRIGO  C A M _ L O', answer: 'Camelo', choices: ['Camel', 'Camelo', 'Camera', 'Candy'], tip: 'Frigo Camelo — ข้อ 19 ผ่านแล้ว!' },
+      { art: '☕<span>💃</span>', bg: '#f7a3d2', tilt: '4deg', blank: 'BALLERINA  C _ P P U C C I N A', answer: 'Cappuccina', choices: ['Cappuccina', 'Captain', 'Cucumber', 'Cartoon'], tip: 'FINAL BOSS ผ่าน! Cappuccina! 🏆' }
+    ].map((question) => ({ ...question, set: 2, question: 'Which word completes this meme name?' }));
+
+    const questions = [...wordQuestions, ...memeQuestions];
+
+    let current = 0;
+    let score = 0;
+    let answered = false;
+    let soundOn = true;
+    let audioContext;
+    const $ = (selector) => document.querySelector(selector);
+    const letters = ['A', 'B', 'C', 'D'];
+
+    function getAudioContext() {
+      if (!audioContext) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return null;
+        audioContext = new AudioContext();
+      }
+      if (audioContext.state === 'suspended') audioContext.resume();
+      return audioContext;
+    }
+
+    function tone(frequency, duration, type = 'sine', volume = .055, delay = 0) {
+      const context = getAudioContext();
+      if (!context || !soundOn) return;
+      const start = context.currentTime + delay;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(.0001, start);
+      gain.gain.exponentialRampToValueAtTime(volume, start + .012);
+      gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
+      oscillator.connect(gain).connect(context.destination);
+      oscillator.start(start);
+      oscillator.stop(start + duration + .03);
+    }
+
+    function playSound(kind) {
+      if (!soundOn) return;
+      if (kind === 'correct') {
+        tone(523.25, .11, 'triangle', .06);
+        tone(659.25, .12, 'triangle', .06, .11);
+        tone(783.99, .17, 'triangle', .07, .22);
+      } else if (kind === 'wrong') {
+        tone(180, .2, 'sawtooth', .045);
+        tone(130, .24, 'sawtooth', .04, .12);
+      } else if (kind === 'next') {
+        tone(493.88, .08, 'sine', .045);
+        tone(659.25, .1, 'sine', .045, .08);
+      } else if (kind === 'quest') {
+        tone(392, .1, 'square', .04);
+        tone(523.25, .1, 'square', .04, .1);
+        tone(783.99, .22, 'triangle', .06, .2);
+      } else if (kind === 'finish') {
+        tone(523.25, .1, 'triangle', .06);
+        tone(659.25, .1, 'triangle', .06, .1);
+        tone(783.99, .12, 'triangle', .065, .2);
+        tone(1046.5, .3, 'triangle', .07, .32);
+      } else if (kind === 'toggle') {
+        tone(659.25, .09, 'sine', .04);
+      }
+    }
+
+    function updateSoundButton() {
+      const button = $('#soundToggle');
+      button.classList.toggle('off', !soundOn);
+      button.setAttribute('aria-pressed', String(soundOn));
+      button.textContent = soundOn ? '🔊 เสียง: เปิด' : '🔇 เสียง: ปิด';
+    }
+
+    function renderQuestion() {
+      answered = false;
+      const q = questions[current];
+      $('#total').textContent = questions.length;
+      const isWordRound = q.set === 1;
+      $('#setBadge').textContent = isWordRound ? 'ชุดที่ 1 · GUESS THE WORD' : 'ชุดที่ 2 · GUESS THE MEME';
+      $('#heroTitle').textContent = isWordRound ? 'อ่านคำใบ้ แล้วทายคำให้ถูก!' : 'ดูภาพ แล้วเติมชื่อมีมให้ครบ!';
+      $('#heroText').textContent = isWordRound ? 'ตอบให้ครบ 10 ข้อ แล้วปลดล็อก Meme Name Quest' : 'เลือกคำตอบที่เติมลงในช่องว่างได้ถูกต้องที่สุด';
+      $('#counter').textContent = `ข้อ ${current + 1} จาก ${questions.length}`;
+      $('#number').textContent = `QUESTION ${String(current + 1).padStart(2, '0')}`;
+      $('#progress').style.width = `${((current + 1) / questions.length) * 100}%`;
+      $('#visual').style.setProperty('--visual-bg', q.bg);
+      $('#art').innerHTML = q.art;
+      $('#art').style.setProperty('--tilt', q.tilt);
+      $('#question').textContent = q.question;
+      $('#blank').style.display = isWordRound ? 'none' : 'block';
+      $('#clues').style.display = isWordRound ? 'grid' : 'none';
+      $('#blank').textContent = q.blank || '';
+      $('#clues').innerHTML = isWordRound ? q.clues.map((clue) => `<div class="clue">${clue}</div>`).join('') : '';
+      $('#feedback').textContent = '';
+      $('#next').classList.remove('show');
+      $('#next').textContent = current === questions.length - 1 ? 'ดูคะแนน →' : (current === wordQuestions.length - 1 ? 'เข้าสู่ Meme Quest →' : 'ข้อต่อไป →');
+      $('#answers').innerHTML = '';
+      q.choices.forEach((choice, index) => {
+        const button = document.createElement('button');
+        button.className = 'answer';
+        button.innerHTML = `<span class="letter">${letters[index]}</span><span>${choice}</span>`;
+        button.addEventListener('click', () => choose(button, choice));
+        $('#answers').appendChild(button);
+      });
+    }
+
+    function choose(button, choice) {
+      if (answered) return;
+      answered = true;
+      const q = questions[current];
+      document.querySelectorAll('.answer').forEach((item) => {
+        item.disabled = true;
+        if (item.textContent.trim().endsWith(q.answer)) item.classList.add('correct');
+      });
+      if (choice === q.answer) {
+        score++;
+        button.classList.add('correct');
+        $('#feedback').textContent = `✅ ${q.tip}`;
+        playSound('correct');
+      } else {
+        button.classList.add('wrong');
+        $('#feedback').textContent = `❌ คำตอบคือ “${q.answer}” — ${q.tip}`;
+        playSound('wrong');
+      }
+      $('#score').textContent = score;
+      $('#next').classList.add('show');
+    }
+
+    function showResult() {
+      $('#quiz').style.display = 'none';
+      $('#result').classList.add('show');
+      const percent = score / questions.length;
+      if (percent === 1) {
+        $('#resultEmoji').textContent = '👑';
+        $('#resultTitle').textContent = 'Meme Master!';
+        $('#resultText').textContent = `คุณได้ ${score}/${questions.length} คะแนน รู้จักคำศัพท์และมีมครบทุกตัวเลย!`;
+      } else if (percent >= .7) {
+        $('#resultEmoji').textContent = '🏆';
+        $('#resultTitle').textContent = 'เก่งมาก!';
+        $('#resultText').textContent = `คุณได้ ${score}/${questions.length} คะแนน อีกนิดเดียวก็เป็น Meme Master แล้ว`;
+      } else {
+        $('#resultEmoji').textContent = '😄';
+        $('#resultTitle').textContent = 'สนุกดี ลองอีกครั้งไหม?';
+        $('#resultText').textContent = `คุณได้ ${score}/${questions.length} คะแนน ลองเล่นใหม่แล้วจำคำศัพท์กับชื่อมีมให้แม่นขึ้น!`;
+      }
+    }
+
+    $('#next').addEventListener('click', () => {
+      if (current === questions.length - 1) {
+        playSound('finish');
+        showResult();
+      } else {
+        playSound(current === wordQuestions.length - 1 ? 'quest' : 'next');
+        current++;
+        renderQuestion();
+      }
+    });
+    $('#soundToggle').addEventListener('click', () => {
+      soundOn = !soundOn;
+      updateSoundButton();
+      if (soundOn) playSound('toggle');
+    });
+    $('#restart').addEventListener('click', () => {
+      current = 0; score = 0; $('#score').textContent = score;
+      $('#result').classList.remove('show'); $('#quiz').style.display = 'block';
+      renderQuestion();
+    });
+    renderQuestion();
+  </script>
+</body>
+</html>
