@@ -90,27 +90,40 @@
 
   <script>
     // ข้อมูลคำศัพท์จากรูปภาพ
-    const vocabList = [
-      { v: 'abandon', s: 'desert', m: 'ละทิ้ง' },
-      { v: 'abate', s: 'lessen', m: 'บรรเทา, เบาบาง' },
-      { v: 'abbreviate', s: 'shorten', m: 'ย่อ, ทำให้สั้นลง' },
-      { v: 'abdicate', s: 'end', m: 'สละ, ลาออก' },
-      { v: 'abduct', s: 'kidnap', m: 'ลักพาตัว' },
-      { v: 'abolish', s: 'cancel, end', m: 'ยกเลิก, ล้มเลิก' },
-      { v: 'abortive', s: 'useless', m: 'ไม่มีประโยชน์, ไร้ผล' },
-      { v: 'abridge', s: 'concise', m: 'ย่อ' },
-      { v: 'absorb', s: 'take in', m: 'ดูดซับ, ซึมซับ' },
-      { v: 'accelerate', s: 'increase', m: 'เร่งความเร็ว' },
-      { v: 'accommodation', s: 'residence', m: 'ที่พักอาศัย' },
-      { v: 'accomplish', s: 'succeed', m: 'ทำให้สำเร็จ' },
-      { v: 'accumulate', s: 'collect', m: 'สะสม' },
-      { v: 'accurate', s: 'correct, precise', m: 'ถูกต้องแม่นยำ' },
-      { v: 'accuse', s: 'blame', m: 'กล่าวหา, ตำหนิ' },
-      { v: 'acquire', s: 'attain', m: 'ได้รับ' },
-      { v: 'activate', s: 'stimulate', m: 'กระตุ้น' },
-      { v: 'adapt', s: 'adjust', m: 'ปรับ' },
-      { v: 'admire', s: 'respect', m: 'ชื่นชม, นับถือ' }
-    ];
+    
+const vocabList = [
+  { v: 'abandon', s: 'desert', m: 'ละทิ้ง' },
+  { v: 'abate', s: 'lessen', m: 'บรรเทา, เบาบาง' },
+  { v: 'abbreviate', s: 'shorten', m: 'ย่อ, ทำให้สั้นลง' },
+  { v: 'abdicate', s: 'end', m: 'สละ, ลาออก' },
+  { v: 'abduct', s: 'kidnap', m: 'ลักพาตัว' },
+  { v: 'abolish', s: 'cancel, end', m: 'ยกเลิก, ล้มเลิก' },
+  { v: 'abortion', s: 'miscarriage', m: 'การทำแท้ง' },
+  { v: 'abortive', s: 'useless, unsuccessful', m: 'ไม่มีประโยชน์, ไร้ผล' },
+  { v: 'abridge', s: 'concise', m: 'ย่อ' },
+  { v: 'absorb', s: 'take in', m: 'ดูดซับ, ซึมซับ' },
+  { v: 'absolutely', s: 'completely', m: 'อย่างยิ่ง, โดยสิ้นเชิง' },
+  { v: 'abstract', s: 'unreal', m: 'นามธรรม, ไม่จริง' },
+  { v: 'abusing', s: 'misusing', m: 'ใช้ในทางผิด' },
+  { v: 'accessible', s: 'reachable', m: 'ที่สามารถเข้าได้' },
+  { v: 'accessory', s: 'additional, supplementary', m: 'เพิ่มเติม' },
+  { v: 'accelerate', s: 'increase, expedite', m: 'เร่งความเร็ว' },
+  { v: 'accommodation', s: 'residence', m: 'ที่พักอาศัย' },
+  { v: 'accomplish', s: 'succeed', m: 'ทำให้สำเร็จ' },
+  { v: 'accumulate', s: 'collect', m: 'สะสม' },
+  { v: 'accurate', s: 'correct, precise', m: 'ถูกต้องแม่นยำ' },
+  { v: 'accuse', s: 'blame, charge with', m: 'กล่าวหา, ตำหนิ' },
+  { v: 'acquire', s: 'attain', m: 'ได้รับ' },
+  { v: 'activate', s: 'stimulate', m: 'กระตุ้น' },
+  { v: 'adapt', s: 'adjust', m: 'ปรับ' },
+  { v: 'admire', s: 'respect', m: 'ชื่นชม, นับถือ' },
+  { v: 'admit', s: 'accept', m: 'ยอมรับ' },
+  { v: 'admonish', s: 'reprimand', m: 'แนะนำ, ตักเตือน' },
+  { v: 'adolescent', s: 'youngster', m: 'วัยรุ่น' },
+  { v: 'adopt', s: 'foster', m: 'รับเลี้ยง, รับเอามา' },
+  { v: 'advantage', s: 'benefit', m: 'ข้อดี' }
+];
+
 
     const $ = (s) => document.querySelector(s);
     let aimGameTimer, moveTimer;
