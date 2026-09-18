@@ -3,349 +3,239 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vocab Master Quest</title>
+  <title>Vocab Master & Reflex Training</title>
   <style>
     :root {
-      --ink: #322b24;
-      --purple: #4d607e;
-      --pink: #d95d43;
-      --yellow: #f0b736;
-      --mint: #79aa91;
-      --paper: #fffaf0;
-      --line: #c8d4e3;
-      --shadow: 7px 8px 0 rgba(66, 53, 37, .22);
+      --ink: #322b24; --pink: #d95d43; --yellow: #f0b736;
+      --paper: #fffaf0; --shadow: 7px 8px 0 rgba(66, 53, 37, .22);
+      /* Tactical Theme Colors */
+      --tac-dark: #1f2326; --tac-red: #ff4655; --tac-cyan: #00ffff;
     }
 
     * { box-sizing: border-box; }
     body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--ink);
+      margin: 0; min-height: 100vh; color: var(--ink);
       font-family: "Comic Sans MS", "Segoe Print", "Noto Sans Thai", system-ui, sans-serif;
-      background:
-        radial-gradient(ellipse at 7% 13%, #f5cb58 0 4%, transparent 4.2%),
-        radial-gradient(ellipse at 93% 12%, #eb8e71 0 3%, transparent 3.2%),
-        repeating-linear-gradient(0deg, transparent 0 26px, rgba(65,91,125,.12) 27px 28px),
-        #b6d0b8;
-      padding: 28px 18px 44px;
+      background: #b6d0b8; padding: 28px 18px 44px; transition: background 0.5s ease;
     }
+    body.tactical-mode { background: #0f1923; color: #ece8e1; }
 
     .app { width: min(960px, 100%); margin: 0 auto; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 20px; }
-    .logo { display: flex; align-items: center; gap: 10px; font-family: "Segoe Print", "Comic Sans MS", "Noto Sans Thai", cursive; font-weight: 900; letter-spacing: -.9px; font-size: clamp(1.15rem, 3vw, 1.55rem); }
-    .logo-mark { width: 43px; height: 43px; display: grid; place-items: center; background: #f9e7a1; color: var(--ink); border: 2px solid var(--ink); border-radius: 49% 43% 52% 41%; transform: rotate(-9deg); box-shadow: 3px 4px 0 var(--ink); }
-    .top-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
-    .score-pill { background: #fffdf6; border: 2px solid var(--ink); border-radius: 7px 13px 8px 12px; padding: 9px 15px; box-shadow: 3px 4px 0 var(--ink); font-weight: 900; white-space: nowrap; transform: rotate(1.5deg); }
-    .sound-toggle { padding: 9px 12px; border: 2px solid var(--ink); border-radius: 13px 7px 11px 8px; color: var(--ink); background: #f7d875; box-shadow: 3px 3px 0 var(--ink); font-weight: 900; cursor: pointer; white-space: nowrap; transform: rotate(-1deg); }
-    .sound-toggle:hover { transform: rotate(-1deg) translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
-    .sound-toggle.off { background: #e8e2d8; color: #625c7f; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .logo { font-weight: 900; font-size: clamp(1.15rem, 3vw, 1.55rem); }
+    .score-pill { padding: 9px 12px; border: 2px solid var(--ink); border-radius: 10px; background: #fffdf6; font-weight: 900; }
+    
+    body.tactical-mode .score-pill { background: var(--tac-dark); border-color: var(--tac-red); color: #ece8e1; }
+    .game-card { background: var(--paper); border: 2px solid var(--ink); border-radius: 14px; box-shadow: var(--shadow); transition: all 0.5s ease; }
+    body.tactical-mode .game-card { background: var(--tac-dark); border-color: var(--tac-red); box-shadow: 7px 8px 0 var(--tac-red); }
 
-    .game-card { overflow: hidden; background: var(--paper); border: 2px solid var(--ink); border-radius: 10px 18px 9px 14px; box-shadow: var(--shadow); }
-    .hero { position: relative; overflow: hidden; padding: 29px 32px 25px; color: var(--ink); background: repeating-linear-gradient(0deg, #fffaf0 0 27px, #d8e4f0 28px 29px); border-bottom: 2px solid var(--ink); }
-    .hero::before { content: "✦  ✎  ☁"; position: absolute; right: 30px; top: 23px; color: #d95d43; font-size: 1.8rem; letter-spacing: 6px; transform: rotate(7deg); }
-    .hero::after { content: ""; position: absolute; left: 19px; top: 0; width: 2px; height: 100%; background: #eb9e9d; }
-    .eyebrow { position: relative; z-index: 1; display: inline-block; padding: 5px 11px; background: #e97859; color: #fffdf8; border: 2px solid var(--ink); border-radius: 6px 11px 8px 5px; font-size: .73rem; font-weight: 900; letter-spacing: .6px; transform: rotate(-1.2deg); }
-    h1 { position: relative; z-index: 1; margin: 12px 0 4px; font-family: "Segoe Print", "Comic Sans MS", "Noto Sans Thai", cursive; font-size: clamp(1.55rem, 5vw, 2.45rem); line-height: 1.05; letter-spacing: -.9px; }
-    .hero p { position: relative; z-index: 1; max-width: 600px; margin: 0; color: #5f5549; font-size: .96rem; font-weight: 700; }
+    .hero { padding: 25px 32px; border-bottom: 2px solid var(--ink); background: #fffaf0; text-align: center; }
+    body.tactical-mode .hero { background: #182027; border-color: var(--tac-red); }
+    h1 { margin: 0 0 10px; font-size: 2rem; }
 
-    .progress-wrap { padding: 20px 28px 0; }
-    .progress-label { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 8px; font-size: .85rem; font-weight: 900; }
-    .progress-track { overflow: hidden; height: 13px; background: #e4e0d5; border: 2px solid var(--ink); border-radius: 5px 9px 6px 8px; }
-    .progress-fill { height: 100%; width: 10%; background: repeating-linear-gradient(135deg, #719e87 0 9px, #8dbca1 9px 17px); border-radius: inherit; transition: width .35s ease; }
-
-    .question-area { display: grid; grid-template-columns: 340px 1fr; gap: 30px; align-items: center; padding: 26px 28px 30px; }
-    .visual-card { position: relative; isolation: isolate; min-height: 280px; display: grid; place-items: center; overflow: hidden; border: 9px solid #fffef8; outline: 2px solid var(--ink); border-radius: 4px 19px 7px 16px; background: var(--visual-bg, #ffe0a6); box-shadow: 5px 6px 0 rgba(50,43,36,.25); transform: rotate(-1.2deg); }
-    .visual-card::before, .visual-card::after { position: absolute; z-index: -1; content: ""; border: 3px solid rgba(29,27,53,.55); border-radius: 50%; }
-    .visual-card::before { width: 235px; height: 235px; background: rgba(255,255,255,.38); }
-    .visual-card::after { width: 310px; height: 80px; bottom: -42px; background: rgba(29,27,53,.12); }
-    .sticker { position: absolute; top: 13px; left: 13px; padding: 5px 8px; background: #f6df7d; border: 2px solid var(--ink); border-radius: 3px 9px 4px 7px; font-weight: 900; font-size: .68rem; transform: rotate(-5deg); }
-    .art { display: flex; align-items: flex-end; justify-content: center; min-height: 180px; font-size: clamp(4.6rem, 12vw, 7.1rem); line-height: .78; filter: drop-shadow(5px 6px 0 rgba(50,43,36,.3)); transform: rotate(var(--tilt, 0deg)); }
-    .art span { margin-left: -.25em; }
-    .caption { position: absolute; bottom: 13px; right: 13px; padding: 5px 8px; color: var(--ink); background: #fffef8; border: 2px solid var(--ink); border-radius: 6px 3px 8px 4px; font-weight: 900; font-size: .7rem; transform: rotate(3deg); }
-
-    .prompt-number { margin: 0; color: #bd533b; font-size: .76rem; font-weight: 900; letter-spacing: .8px; }
-    h2 { margin: 7px 0 18px; font-family: "Segoe Print", "Comic Sans MS", "Noto Sans Thai", cursive; font-size: clamp(1.25rem, 3vw, 1.7rem); line-height: 1.18; }
-    .blank { display: block; margin-bottom: 20px; padding: 13px 15px; border: 2px dashed #55708c; border-radius: 5px 12px 7px 10px; color: var(--ink); background: #f0f5f6; font-family: "Courier New", monospace; font-size: clamp(1rem, 2.6vw, 1.26rem); font-weight: 900; letter-spacing: 1.4px; word-break: break-word; }
-    .clues { display: grid; gap: 8px; margin-bottom: 20px; padding: 13px 15px; border: 2px dashed #55708c; border-radius: 5px 12px 7px 10px; background: #f0f5f6; }
-    .clue { display: flex; gap: 8px; align-items: flex-start; font-size: .94rem; font-weight: 700; line-height: 1.32; }
-    .clue::before { content: "✦"; color: var(--pink); font-weight: 900; }
-    .answers { display: grid; gap: 10px; }
-    button { font: inherit; }
-    .answer { display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px 12px; border: 2px solid var(--ink); border-radius: 6px 12px 7px 10px; color: var(--ink); background: #fffef9; text-align: left; font-weight: 800; cursor: pointer; box-shadow: 2px 3px 0 rgba(50,43,36,.25); transition: transform .12s ease, background .12s ease; }
-    .answer:nth-child(2) { border-radius: 11px 5px 12px 7px; }
-    .answer:nth-child(3) { border-radius: 7px 12px 5px 11px; }
-    .answer:nth-child(4) { border-radius: 12px 7px 10px 5px; }
-    .answer:hover:not(:disabled) { background: #fff0b9; transform: translateX(4px) rotate(-.35deg); }
-    .answer:disabled { cursor: default; }
-    .letter { flex: 0 0 27px; height: 27px; display: grid; place-items: center; border-radius: 48% 55% 45% 52%; color: #fffdf8; background: #55708c; font-size: .78rem; transform: rotate(-4deg); }
-    .answer.correct { color: #073d30; background: #a7f4d8; border-color: #073d30; }
-    .answer.correct .letter { background: #087154; }
-    .answer.wrong { color: #7e1642; background: #ffd1e5; border-color: #7e1642; }
-    .answer.wrong .letter { background: #cf3773; }
-    .feedback { min-height: 29px; margin: 14px 0 0; font-weight: 900; }
-    .next-row { display: flex; justify-content: flex-end; margin-top: 10px; }
-    .next { display: none; padding: 10px 16px; border: 2px solid var(--ink); border-radius: 7px 13px 8px 10px; color: var(--ink); background: #f0b736; box-shadow: 3px 3px 0 var(--ink); font-weight: 900; cursor: pointer; }
-    .next:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
-    .next.show { display: block; }
-
-    .result { display: none; padding: 34px 28px; text-align: center; }
-    .result.show { display: block; }
-    .result .big-emoji { font-size: 5.2rem; line-height: 1; }
-    .result h2 { margin: 9px 0; font-size: 2rem; }
-    .result p { margin: 0 auto 19px; max-width: 520px; font-size: 1.05rem; }
-    .restart { padding: 12px 19px; border: 2px solid var(--ink); border-radius: 7px 12px 8px 13px; color: var(--ink); background: var(--yellow); box-shadow: 4px 4px 0 var(--ink); font-weight: 900; cursor: pointer; }
-
-    @media (max-width: 720px) {
-      body { padding: 16px 12px 30px; }
-      .hero, .progress-wrap { padding-left: 18px; padding-right: 18px; }
-      .question-area { grid-template-columns: 1fr; gap: 21px; padding: 22px 18px 25px; }
-      .visual-card { min-height: 215px; }
-      .art { min-height: 136px; }
-      .topbar { align-items: flex-start; }
-      .top-actions { gap: 7px; flex-direction: column; align-items: flex-end; }
-      .score-pill, .sound-toggle { padding: 7px 10px; font-size: .82rem; }
+    /* AIM TRAINER STYLES */
+    .aim-area { padding: 20px; }
+    .aim-hud { display: flex; justify-content: space-between; font-weight: 900; margin-bottom: 15px; font-size: 1.2rem; align-items: center; }
+    .target-prompt { flex: 1; text-align: center; font-size: 1.6rem; color: var(--tac-cyan); text-shadow: 1px 1px 0px rgba(0,255,255,0.3); margin: 0 20px; border: 2px dashed var(--tac-cyan); border-radius: 10px; padding: 10px; }
+    .aim-playground { position: relative; width: 100%; height: 500px; background: #111; border: 3px solid #333; border-radius: 8px; overflow: hidden; }
+    
+    .vocab-target {
+      position: absolute; display: grid; place-items: center; padding: 10px 20px;
+      background: var(--tac-dark); color: white; border: 2px solid var(--tac-cyan);
+      border-radius: 20px; font-weight: bold; font-size: 1.2rem; cursor: crosshair;
+      user-select: none; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      transition: transform 0.1s;
     }
+    .vocab-target:hover { transform: scale(1.1); box-shadow: 0 0 15px rgba(0, 255, 255, 0.8); }
+    .vocab-target.wrong { border-color: var(--tac-red); box-shadow: 0 0 15px rgba(255, 70, 85, 0.8); color: var(--tac-red); }
+
+    .aim-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
+    .aim-overlay h2 { font-size: 3rem; margin: 0; color: var(--tac-cyan); }
+    .start-aim-btn { margin-top: 20px; padding: 15px 30px; font-size: 1.2rem; background: var(--tac-red); color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
+    
+    @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @media (max-width: 720px) { .aim-playground { height: 400px; } .target-prompt { font-size: 1.1rem; } }
   </style>
 </head>
-<body>
+<body class="tactical-mode">
   <main class="app">
     <header class="topbar">
-      <div class="logo"><span class="logo-mark">✦</span><span>Vocab Game Corner</span></div>
-      <div class="top-actions">
-        <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true">🔊 เสียง: เปิด</button>
-        <div class="score-pill">⭐ <span id="score">0</span> / <span id="total">20</span></div>
-      </div>
+      <div class="logo">✦ AGENT VOCAB DRILL</div>
+      <div class="score-pill">⭐ Score: <span id="aimScore">0</span></div>
     </header>
 
     <section class="game-card">
       <div class="hero">
-        <span class="eyebrow" id="setBadge">ชุดที่ 1 · GUESS THE WORD</span>
-        <h1 id="heroTitle">อ่านคำใบ้ แล้วทายคำศัพท์ให้ถูก!</h1>
-        <p id="heroText">ทดสอบคลังคำศัพท์ของคุณ จากความหมายและคำเหมือน (Synonym)</p>
+        <h1 id="heroTitle">ทดสอบการตอบสนองคำศัพท์</h1>
+        <p style="color: #b9b5ae;">คลิกคำศัพท์ภาษาอังกฤษที่ตรงกับ "ความหมาย" ที่กำหนดให้เร็วที่สุด!</p>
       </div>
 
-      <div id="quiz">
-        <div class="progress-wrap">
-          <div class="progress-label"><span id="counter">ข้อ 1 จาก 20</span><span>สู้ๆ นะ 👀</span></div>
-          <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+      <div class="aim-area" id="aimArea">
+        <div class="aim-hud">
+          <div>⏳ <span id="aimTimer" style="color:var(--tac-cyan);">45</span>s</div>
+          <div class="target-prompt" id="aimPromptMeaning">เตรียมพร้อม...</div>
+          <div>🎯 <span id="aimCombo" style="color:var(--yellow);">Combo: 0</span></div>
         </div>
-        <div class="question-area">
-          <div class="visual-card" id="visual">
-            <span class="sticker">VOCAB SPOTTED</span>
-            <div class="art" id="art"></div>
-            <span class="caption">WHAT WORD IS THIS?</span>
-          </div>
-          <div>
-            <p class="prompt-number" id="number">QUESTION 01</p>
-            <h2 id="question">คำศัพท์ข้อนี้คือคำว่าอะไร?</h2>
-            <div class="blank" id="blank"></div>
-            <div class="clues" id="clues"></div>
-            <div class="answers" id="answers"></div>
-            <p class="feedback" id="feedback" aria-live="polite"></p>
-            <div class="next-row"><button class="next" id="next">ข้อต่อไป →</button></div>
+        
+        <div class="aim-playground" id="aimPlayground">
+          <div class="aim-overlay" id="aimOverlay">
+            <h2 id="aimOverTitle">REFLEX ROOM</h2>
+            <button class="start-aim-btn" id="startAimBtn">START DRILL</button>
           </div>
         </div>
-      </div>
-
-      <div class="result" id="result">
-        <div class="big-emoji" id="resultEmoji">🏆</div>
-        <h2 id="resultTitle">สุดยอด!</h2>
-        <p id="resultText"></p>
-        <button class="restart" id="restart">เล่นอีกครั้ง ↻</button>
       </div>
     </section>
   </main>
 
   <script>
-    const wordQuestions = [
-      { art: '🏃‍♂️<span>🚪</span>', bg: '#ffd96a', tilt: '-4deg', question: 'What word am I?', clues: ['Synonym: desert', 'Meaning: ละทิ้ง'], answer: 'abandon', choices: ['abandon', 'abate', 'adapt', 'admit'], tip: 'ถูกต้อง! abandon (ละทิ้ง)' },
-      { art: '✂️<span>📝</span>', bg: '#99dcff', tilt: '5deg', question: 'What word am I?', clues: ['Synonym: shorten', 'Meaning: ย่อ, ทำให้สั้นลง'], answer: 'abbreviate', choices: ['absorb', 'abbreviate', 'acquire', 'accuse'], tip: 'ถูกต้อง! abbreviate (ย่อ, ทำให้สั้นลง)' },
-      { art: '👽<span>🛸</span>', bg: '#ffb6c3', tilt: '-4deg', question: 'What word am I?', clues: ['Synonym: kidnap', 'Meaning: ลักพาตัว'], answer: 'abduct', choices: ['abduct', 'abolish', 'admire', 'adopt'], tip: 'ใช่เลย! abduct (ลักพาตัว)' },
-      { art: '🚫<span>🛑</span>', bg: '#c5b4ff', tilt: '3deg', question: 'What word am I?', clues: ['Synonym: cancel, end', 'Meaning: ยกเลิก, ล้มเลิก'], answer: 'abolish', choices: ['activate', 'accomplish', 'abolish', 'accumulate'], tip: 'ถูกต้อง! abolish (ยกเลิก, ล้มเลิก)' },
-      { art: '🧽<span>💧</span>', bg: '#ff9ecf', tilt: '-4deg', question: 'What word am I?', clues: ['Synonym: take in', 'Meaning: ดูดซับ, ซึมซับ'], answer: 'absorb', choices: ['abstract', 'absorb', 'accessible', 'accurate'], tip: 'ฟองน้ำต้องดูดซับ — absorb!' },
-      { art: '💯<span>✨</span>', bg: '#a9e9f6', tilt: '4deg', question: 'What word am I?', clues: ['Synonym: completely', 'Meaning: อย่างยิ่ง, โดยสิ้นเชิง'], answer: 'absolutely', choices: ['absolutely', 'abortive', 'adolescent', 'abusing'], tip: 'ถูกต้อง! absolutely (อย่างยิ่ง)' },
-      { art: '🎨<span>🌀</span>', bg: '#c8eca8', tilt: '-4deg', question: 'What word am I?', clues: ['Synonym: unreal', 'Meaning: นามธรรม, ไม่จริง'], answer: 'abstract', choices: ['abstract', 'accurate', 'admonish', 'advantage'], tip: 'ถูกต้อง! abstract (นามธรรม)' },
-      { art: '♿<span>🚪</span>', bg: '#ffe35f', tilt: '5deg', question: 'What word am I?', clues: ['Synonym: reachable', 'Meaning: ที่สามารถเข้าได้'], answer: 'accessible', choices: ['accessory', 'accessible', 'accommodation', 'abridge'], tip: 'ที่สามารถเข้าถึงได้ คือ accessible!' },
-      { art: '🏎️<span>💨</span>', bg: '#f7a3d2', tilt: '-3deg', question: 'What word am I?', clues: ['Synonym: increase, expedite', 'Meaning: เร่งความเร็ว'], answer: 'accelerate', choices: ['accelerate', 'accumulate', 'accomplish', 'activate'], tip: 'ใช่แล้ว! accelerate (เร่งความเร็ว)' },
-      { art: '🏠<span>🛏️</span>', bg: '#ffc490', tilt: '4deg', question: 'What word am I? 🔥', clues: ['Synonym: residence', 'Meaning: ที่พักอาศัย'], answer: 'accommodation', choices: ['abortion', 'advantage', 'accommodation', 'adolescent'], tip: 'ผ่านชุดแรกแล้ว! accommodation (ที่พักอาศัย)' }
-    ].map((question) => ({ ...question, set: 1 }));
+    // ข้อมูลคำศัพท์จากรูปภาพ
+    const vocabList = [
+      { v: 'abandon', s: 'desert', m: 'ละทิ้ง' },
+      { v: 'abate', s: 'lessen', m: 'บรรเทา, เบาบาง' },
+      { v: 'abbreviate', s: 'shorten', m: 'ย่อ, ทำให้สั้นลง' },
+      { v: 'abdicate', s: 'end', m: 'สละ, ลาออก' },
+      { v: 'abduct', s: 'kidnap', m: 'ลักพาตัว' },
+      { v: 'abolish', s: 'cancel, end', m: 'ยกเลิก, ล้มเลิก' },
+      { v: 'abortive', s: 'useless', m: 'ไม่มีประโยชน์, ไร้ผล' },
+      { v: 'abridge', s: 'concise', m: 'ย่อ' },
+      { v: 'absorb', s: 'take in', m: 'ดูดซับ, ซึมซับ' },
+      { v: 'accelerate', s: 'increase', m: 'เร่งความเร็ว' },
+      { v: 'accommodation', s: 'residence', m: 'ที่พักอาศัย' },
+      { v: 'accomplish', s: 'succeed', m: 'ทำให้สำเร็จ' },
+      { v: 'accumulate', s: 'collect', m: 'สะสม' },
+      { v: 'accurate', s: 'correct, precise', m: 'ถูกต้องแม่นยำ' },
+      { v: 'accuse', s: 'blame', m: 'กล่าวหา, ตำหนิ' },
+      { v: 'acquire', s: 'attain', m: 'ได้รับ' },
+      { v: 'activate', s: 'stimulate', m: 'กระตุ้น' },
+      { v: 'adapt', s: 'adjust', m: 'ปรับ' },
+      { v: 'admire', s: 'respect', m: 'ชื่นชม, นับถือ' }
+    ];
 
-    const memeQuestions = [
-      { art: '🏆<span>🎯</span>', bg: '#ffd96a', tilt: '-5deg', blank: 'S Y N O N Y M:  S U C C _ E D', answer: 'accomplish', choices: ['accomplish', 'accelerate', 'accumulate', 'acquire'], tip: 'ถูกต้อง! accomplish (ทำให้สำเร็จ)' },
-      { art: '📚<span>💰</span>', bg: '#99dcff', tilt: '5deg', blank: 'S Y N O N Y M:  C O L L _ C T', answer: 'accumulate', choices: ['accurate', 'accumulate', 'adapt', 'adopt'], tip: 'เยี่ยม! accumulate (สะสม)' },
-      { art: '🎯<span>📏</span>', bg: '#ffb6c3', tilt: '-4deg', blank: 'S Y N O N Y M:  C O R R _ C T', answer: 'accurate', choices: ['accurate', 'abstract', 'absolutely', 'accessible'], tip: 'ใช่แล้ว! accurate (ถูกต้องแม่นยำ)' },
-      { art: '👈<span>😠</span>', bg: '#ffc490', tilt: '4deg', blank: 'S Y N O N Y M:  B L A M _', answer: 'accuse', choices: ['abuse', 'accuse', 'admit', 'admire'], tip: 'ถูกต้อง! accuse (กล่าวหา, ตำหนิ)' },
-      { art: '🤲<span>🎁</span>', bg: '#c8eca8', tilt: '-4deg', blank: 'S Y N O N Y M:  A T T A _ N', answer: 'acquire', choices: ['acquire', 'require', 'admire', 'adapt'], tip: 'ได้รับมา คือ acquire! 🎁' },
-      { art: '🔘<span>⚡</span>', bg: '#c5b4ff', tilt: '3deg', blank: 'S Y N O N Y M:  S T I M U L _ T E', answer: 'activate', choices: ['activate', 'accelerate', 'abbreviate', 'abdicate'], tip: 'activate (กระตุ้น) ถูกต้อง!' },
-      { art: '🦎<span>🔧</span>', bg: '#ffe35f', tilt: '-3deg', blank: 'S Y N O N Y M:  A D J _ S T', answer: 'adapt', choices: ['adopt', 'adapt', 'abduct', 'admit'], tip: 'ปรับตัวให้เข้ากับสถานการณ์คือ adapt 🦎' },
-      { art: '🤩<span>👏</span>', bg: '#9be7b1', tilt: '5deg', blank: 'S Y N O N Y M:  R E S P _ C T', answer: 'admire', choices: ['admire', 'admonish', 'accuse', 'absorb'], tip: 'ถูกแล้ว! admire (ชื่นชม, นับถือ)' },
-      { art: '🙋‍♂️<span>✅</span>', bg: '#9de0ee', tilt: '-5deg', blank: 'S Y N O N Y M:  A C C E P _', answer: 'admit', choices: ['admit', 'abdicate', 'abate', 'adapt'], tip: 'admit (ยอมรับ) — ข้อ 19 ผ่านแล้ว!' },
-      { art: '📈<span>👍</span>', bg: '#f7a3d2', tilt: '4deg', blank: 'S Y N O N Y M:  B E N E F _ T', answer: 'advantage', choices: ['advantage', 'adolescent', 'accommodation', 'accessory'], tip: 'FINAL BOSS ผ่าน! advantage (ข้อดี) 🏆' }
-    ].map((question) => ({ ...question, set: 2, question: 'คำศัพท์ใดมีความหมายตรงกับ Synonym นี้?' }));
+    const $ = (s) => document.querySelector(s);
+    let aimGameTimer, moveTimer;
+    let aimTime = 45; 
+    let aimScore = 0;
+    let combo = 0;
+    let currentPrompt = null;
+    let targetsArray = [];
 
-    const questions = [...wordQuestions, ...memeQuestions];
+    $('#startAimBtn').onclick = () => {
+      $('#aimOverlay').style.display = 'none';
+      aimTime = 45; aimScore = 0; combo = 0;
+      updateHUD();
+      startGameLoop();
+      nextVocabRound();
+    };
 
-    let current = 0;
-    let score = 0;
-    let answered = false;
-    let soundOn = true;
-    let audioContext;
-    const $ = (selector) => document.querySelector(selector);
-    const letters = ['A', 'B', 'C', 'D'];
-
-    function getAudioContext() {
-      if (!audioContext) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return null;
-        audioContext = new AudioContext();
-      }
-      if (audioContext.state === 'suspended') audioContext.resume();
-      return audioContext;
+    function updateHUD() {
+      $('#aimTimer').textContent = aimTime;
+      $('#aimScore').textContent = aimScore;
+      $('#aimCombo').textContent = `Combo: ${combo}`;
     }
 
-    function tone(frequency, duration, type = 'sine', volume = .055, delay = 0) {
-      const context = getAudioContext();
-      if (!context || !soundOn) return;
-      const start = context.currentTime + delay;
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.type = type;
-      oscillator.frequency.setValueAtTime(frequency, start);
-      gain.gain.setValueAtTime(.0001, start);
-      gain.gain.exponentialRampToValueAtTime(volume, start + .012);
-      gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(start);
-      oscillator.stop(start + duration + .03);
+    function startGameLoop() {
+      aimGameTimer = setInterval(() => {
+        aimTime--;
+        updateHUD();
+        if(aimTime <= 0) endAimGame();
+      }, 1000);
+
+      // ทำให้เป้าหมายขยับทุกๆ 1.5 วินาทีเพื่อความท้าทาย
+      moveTimer = setInterval(() => {
+        document.querySelectorAll('.vocab-target').forEach(el => {
+            const sizeW = 120; const sizeH = 40;
+            const maxX = $('#aimPlayground').clientWidth - sizeW;
+            const maxY = $('#aimPlayground').clientHeight - sizeH;
+            el.style.left = `${Math.random() * maxX}px`;
+            el.style.top = `${Math.random() * maxY}px`;
+        });
+      }, 1800);
     }
 
-    function playSound(kind) {
-      if (!soundOn) return;
-      if (kind === 'correct') {
-        tone(523.25, .11, 'triangle', .06);
-        tone(659.25, .12, 'triangle', .06, .11);
-        tone(783.99, .17, 'triangle', .07, .22);
-      } else if (kind === 'wrong') {
-        tone(180, .2, 'sawtooth', .045);
-        tone(130, .24, 'sawtooth', .04, .12);
-      } else if (kind === 'next') {
-        tone(493.88, .08, 'sine', .045);
-        tone(659.25, .1, 'sine', .045, .08);
-      } else if (kind === 'quest') {
-        tone(392, .1, 'square', .04);
-        tone(523.25, .1, 'square', .04, .1);
-        tone(783.99, .22, 'triangle', .06, .2);
-      } else if (kind === 'finish') {
-        tone(523.25, .1, 'triangle', .06);
-        tone(659.25, .1, 'triangle', .06, .1);
-        tone(783.99, .12, 'triangle', .065, .2);
-        tone(1046.5, .3, 'triangle', .07, .32);
-      } else if (kind === 'toggle') {
-        tone(659.25, .09, 'sine', .04);
-      }
-    }
+    function nextVocabRound() {
+      $('#aimPlayground').innerHTML = ''; // Clear old targets
+      if(aimTime <= 0) return;
 
-    function updateSoundButton() {
-      const button = $('#soundToggle');
-      button.classList.toggle('off', !soundOn);
-      button.setAttribute('aria-pressed', String(soundOn));
-      button.textContent = soundOn ? '🔊 เสียง: เปิด' : '🔇 เสียง: ปิด';
-    }
+      // สุ่มคำถามปัจจุบัน
+      currentPrompt = vocabList[Math.floor(Math.random() * vocabList.length)];
+      $('#aimPromptMeaning').innerHTML = `"${currentPrompt.m}" <br><span style="font-size:1rem; color:#8dbca1;">(Synonym: ${currentPrompt.s})</span>`;
+      
+      // ดึงตัวหลอกมา 3-4 คำ
+      let distractors = vocabList.filter(v => v.v !== currentPrompt.v).sort(() => 0.5 - Math.random()).slice(0, 3);
+      
+      let spawnList = [currentPrompt, ...distractors];
+      spawnList.sort(() => 0.5 - Math.random()); // สลับตำแหน่งคำตอบ
 
-    function renderQuestion() {
-      answered = false;
-      const q = questions[current];
-      $('#total').textContent = questions.length;
-      const isWordRound = q.set === 1;
-      $('#setBadge').textContent = isWordRound ? 'ชุดที่ 1 · GUESS FROM CLUES' : 'ชุดที่ 2 · GUESS THE SYNONYM';
-      $('#heroTitle').textContent = isWordRound ? 'อ่านคำใบ้ แล้วทายคำศัพท์ให้ถูก!' : 'ดูคำเหมือน (Synonym) แล้วเติมคำให้ถูก!';
-      $('#heroText').textContent = isWordRound ? 'ทดสอบคลังคำศัพท์ของคุณ จากความหมายภาษาไทยและคำเหมือน' : 'เลือกคำตอบที่ตรงกับตัวอักษรที่หายไปและมีความหมายตรงกัน';
-      $('#counter').textContent = `ข้อ ${current + 1} จาก ${questions.length}`;
-      $('#number').textContent = `QUESTION ${String(current + 1).padStart(2, '0')}`;
-      $('#progress').style.width = `${((current + 1) / questions.length) * 100}%`;
-      $('#visual').style.setProperty('--visual-bg', q.bg);
-      $('#art').innerHTML = q.art;
-      $('#art').style.setProperty('--tilt', q.tilt);
-      $('#question').textContent = q.question;
-      $('#blank').style.display = isWordRound ? 'none' : 'block';
-      $('#clues').style.display = isWordRound ? 'grid' : 'none';
-      $('#blank').textContent = q.blank || '';
-      $('#clues').innerHTML = isWordRound ? q.clues.map((clue) => `<div class="clue">${clue}</div>`).join('') : '';
-      $('#feedback').textContent = '';
-      $('#next').classList.remove('show');
-      $('#next').textContent = current === questions.length - 1 ? 'ดูคะแนน →' : (current === wordQuestions.length - 1 ? 'เข้าสู่โหมด Synonym →' : 'ข้อต่อไป →');
-      $('#answers').innerHTML = '';
-      q.choices.forEach((choice, index) => {
-        const button = document.createElement('button');
-        button.className = 'answer';
-        button.innerHTML = `<span class="letter">${letters[index]}</span><span>${choice}</span>`;
-        button.addEventListener('click', () => choose(button, choice));
-        $('#answers').appendChild(button);
+      spawnList.forEach(vocab => {
+        const target = document.createElement('div');
+        target.className = 'vocab-target';
+        target.textContent = vocab.v;
+        
+        const sizeW = 120; const sizeH = 40;
+        const maxX = $('#aimPlayground').clientWidth - sizeW - 20;
+        const maxY = $('#aimPlayground').clientHeight - sizeH - 20;
+        target.style.left = `${Math.random() * maxX + 10}px`;
+        target.style.top = `${Math.random() * maxY + 10}px`;
+
+        target.onmousedown = () => {
+          if (vocab.v === currentPrompt.v) {
+            // ตอบถูก
+            combo++;
+            let points = 10 + (combo * 2); // ยิ่งคอมโบเยอะ ยิ่งได้แต้มเยอะ
+            aimScore += points;
+            target.style.background = 'var(--tac-cyan)';
+            target.style.color = '#000';
+            setTimeout(nextVocabRound, 150);
+          } else {
+            // ตอบผิด
+            combo = 0;
+            aimScore = Math.max(0, aimScore - 5);
+            target.classList.add('wrong');
+            target.textContent = '❌';
+            setTimeout(() => target.remove(), 400);
+          }
+          updateHUD();
+        };
+
+        $('#aimPlayground').appendChild(target);
       });
     }
 
-    function choose(button, choice) {
-      if (answered) return;
-      answered = true;
-      const q = questions[current];
-      document.querySelectorAll('.answer').forEach((item) => {
-        item.disabled = true;
-        if (item.textContent.trim().endsWith(q.answer)) item.classList.add('correct');
-      });
-      if (choice === q.answer) {
-        score++;
-        button.classList.add('correct');
-        $('#feedback').textContent = `✅ ${q.tip}`;
-        playSound('correct');
-      } else {
-        button.classList.add('wrong');
-        $('#feedback').textContent = `❌ คำตอบคือ “${q.answer}” — ${q.tip}`;
-        playSound('wrong');
-      }
-      $('#score').textContent = score;
-      $('#next').classList.add('show');
-    }
+    function endAimGame() {
+      clearInterval(aimGameTimer);
+      clearInterval(moveTimer);
+      $('#aimPlayground').innerHTML = ''; 
+      $('#aimPromptMeaning').textContent = 'จบการทดสอบ!';
+      
+      const overlay = $('#aimOverlay');
+      overlay.style.display = 'flex';
+      $('#aimOverTitle').textContent = 'TIME UP!';
+      
+      let rank = 'IRON';
+      if (aimScore > 300) rank = 'RADIANT 👑';
+      else if (aimScore > 200) rank = 'DIAMOND 💎';
+      else if (aimScore > 100) rank = 'GOLD 🏆';
 
-    function showResult() {
-      $('#quiz').style.display = 'none';
-      $('#result').classList.add('show');
-      const percent = score / questions.length;
-      if (percent === 1) {
-        $('#resultEmoji').textContent = '👑';
-        $('#resultTitle').textContent = 'Vocab Master!';
-        $('#resultText').textContent = `คุณได้ ${score}/${questions.length} คะแนน จำคำศัพท์และ Synonym ได้ครบถ้วนเลย!`;
-      } else if (percent >= .7) {
-        $('#resultEmoji').textContent = '🏆';
-        $('#resultTitle').textContent = 'เก่งมาก!';
-        $('#resultText').textContent = `คุณได้ ${score}/${questions.length} คะแนน คลังคำศัพท์ของคุณแน่นมาก!`;
-      } else {
-        $('#resultEmoji').textContent = '📚';
-        $('#resultTitle').textContent = 'ฝึกฝนอีกนิดนะ!';
-        $('#resultText').textContent = `คุณได้ ${score}/${questions.length} คะแนน ลองเล่นอีกครั้งเพื่อจำคำศัพท์ให้แม่นขึ้น`;
-      }
+      let resultHTML = document.createElement('div');
+      resultHTML.innerHTML = `
+        <p style="color:white; font-size:1.5rem; margin-top:10px;">คะแนนรวม: <span style="color:var(--tac-cyan); font-weight:bold;">${aimScore}</span></p>
+        <p style="color:var(--yellow); font-size:1.2rem;">RANK: ${rank}</p>
+      `;
+      
+      // ลบปุ่มเก่าก่อน
+      const oldBtn = $('#startAimBtn');
+      if (oldBtn) oldBtn.remove();
+      
+      const btn = document.createElement('button');
+      btn.className = 'start-aim-btn'; 
+      btn.id = 'startAimBtn';
+      btn.textContent = 'เล่นอีกครั้ง';
+      btn.onclick = () => { overlay.innerHTML = '<h2 id="aimOverTitle">REFLEX ROOM</h2>'; overlay.appendChild(btn); $('#startAimBtn').click(); };
+      
+      overlay.appendChild(resultHTML);
+      overlay.appendChild(btn);
     }
-
-    $('#next').addEventListener('click', () => {
-      if (current === questions.length - 1) {
-        playSound('finish');
-        showResult();
-      } else {
-        playSound(current === wordQuestions.length - 1 ? 'quest' : 'next');
-        current++;
-        renderQuestion();
-      }
-    });
-    $('#soundToggle').addEventListener('click', () => {
-      soundOn = !soundOn;
-      updateSoundButton();
-      if (soundOn) playSound('toggle');
-    });
-    $('#restart').addEventListener('click', () => {
-      current = 0; score = 0; $('#score').textContent = score;
-      $('#result').classList.remove('show'); $('#quiz').style.display = 'block';
-      renderQuestion();
-    });
-    renderQuestion();
   </script>
 </body>
 </html>
